@@ -1,0 +1,6 @@
+numpy==2.4.4
+scipy==1.17.1
+matplotlib==3.10.8
+# For the optional real-benchmark run (run_lfw_benchmark.py):
+scikit-learn>=1.4
+deepface>=0.0.90

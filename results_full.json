@@ -1,0 +1,331 @@
+{
+  "environment": {
+    "cpu": "Intel(R) Xeon(R) @ 2.80GHz (1 vCPU)",
+    "os": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "numpy": "2.4.4",
+    "n": 5,
+    "k": 3,
+    "seed": 42,
+    "config_A": "Configuration A (NPN + CRT, ramp)",
+    "config_B": "Configuration B (multivariate linear + verification, perfect)"
+  },
+  "R1_correctness": {
+    "A": {
+      "enrolments": 1000,
+      "lossless_success": 1000,
+      "lossless_rate_pct": 100.0,
+      "subsets_tested": 10000,
+      "subsets_success": 10000,
+      "subsets_rate_pct": 100.0
+    },
+    "B": {
+      "enrolments": 1000,
+      "lossless_success": 1000,
+      "lossless_rate_pct": 100.0,
+      "subsets_tested": 10000,
+      "subsets_success": 10000,
+      "subsets_rate_pct": 100.0
+    }
+  },
+  "R2_recognition": {
+    "note": "Synthetic embedding model used for the lossless check (real LFW images are not downloadable in this environment). The measured claim is that the protection layer is lossless: the template recovered through the full pipeline is bit-identical to the direct template, so the protected EER equals the unprotected EER.",
+    "max_template_delta_hamming": 0.0,
+    "EER_protected": 0.049166666666666664,
+    "EER_unprotected": 0.049166666666666664,
+    "EER_equal_lossless": true,
+    "EER_threshold": 0.43190954773869344,
+    "EER_95CI_synthetic": [
+      0.04170624999999999,
+      0.05891666666666667
+    ],
+    "published_reference": {
+      "encoder": "ArcFace ResNet-100 (MS1M), standard LFW verification protocol, 6000 pairs, 10 folds",
+      "LFW_accuracy_pct": 99.4,
+      "implied_EER_pct_order": "<1",
+      "source": "Deng et al., ArcFace, CVPR 2019; ONNX Model Zoo LResNet100E-IR reports 99.4-99.8% on LFW",
+      "meaning": "The lossless protection layer inherits this published operating point unchanged."
+    }
+  },
+  "R3_leakage": {
+    "ConfigA_ramp": {
+      "0": {
+        "mean_bits_disclosed_per_16bit_block": 0.0,
+        "min": 0.0,
+        "max": 0.0,
+        "candidates_mean": 65536.0
+      },
+      "1": {
+        "mean_bits_disclosed_per_16bit_block": 6.0,
+        "min": 6.0,
+        "max": 6.0,
+        "candidates_mean": 1024.0
+      },
+      "2": {
+        "mean_bits_disclosed_per_16bit_block": 12.0,
+        "min": 12.0,
+        "max": 12.0,
+        "candidates_mean": 16.0
+      },
+      "3": {
+        "mean_bits_disclosed_per_16bit_block": 16.0,
+        "min": 16.0,
+        "max": 16.0,
+        "candidates_mean": 1.0
+      }
+    },
+    "ConfigB_perfect": {
+      "0": {
+        "bits_disclosed_about_secret": 0.0,
+        "candidate_solutions": "q^(k-t) = q^3",
+        "system_rank": 0,
+        "perfect": true
+      },
+      "1": {
+        "bits_disclosed_about_secret": 0.0,
+        "candidate_solutions": "q^(k-t) = q^2",
+        "system_rank": 1,
+        "perfect": true
+      },
+      "2": {
+        "bits_disclosed_about_secret": 0.0,
+        "candidate_solutions": "q^(k-t) = q^1",
+        "system_rank": 2,
+        "perfect": true
+      },
+      "3": {
+        "bits_disclosed_about_secret": "full (reconstruction)",
+        "candidate_solutions": 1,
+        "perfect": true
+      }
+    },
+    "record_bytes": 76,
+    "blocks_16bit": 38,
+    "ConfigA_full_record_bits_at_t1": 228.0,
+    "ConfigA_full_record_bits_at_t2": 456.0,
+    "interpretation": "Config A discloses ciphertext bits below threshold (ramp); Config B discloses nothing (perfect). Biometric secrecy also rests on AE, secrecy of K, and non-invertible BioHashing."
+  },
+  "R4_attacks": {
+    "A": {
+      "stolen_token_below_threshold": {
+        "trials": 2000,
+        "recovery_success": 0,
+        "success_rate_pct": 0.0,
+        "criterion": "recover template with token + 1 share, no K"
+      },
+      "key_compromise_plus_k_minus_1": {
+        "trials": 2000,
+        "full_recovery_success": 0,
+        "success_rate_pct": 0.0,
+        "note": "Config A additionally leaks ~12 ciphertext bits/16-bit block at k-1 shares; Config B leaks nothing"
+      },
+      "malicious_share_substitution": {
+        "trials": 2000,
+        "detected": 2000,
+        "detection_rate_pct": 100.0,
+        "mechanism": "per-share integrity tag"
+      },
+      "threshold_collusion_k_minus_1": {
+        "recovery_success_rate_pct": 0.0,
+        "residual_uncertainty": "2^4 candidates per 16-bit block"
+      },
+      "cross_enrolment_linkage": {
+        "share_bit_difference": 0.4079,
+        "linkable": false,
+        "note": "independent salt/IV/key per enrolment"
+      },
+      "biohashing_inversion_without_token": {
+        "recovery_success_rate_pct": 0.0,
+        "reason": "projection matrix is salt-seeded and not stored; sign quantisation is many-to-one"
+      }
+    },
+    "B": {
+      "stolen_token_below_threshold": {
+        "trials": 2000,
+        "recovery_success": 0,
+        "success_rate_pct": 0.0,
+        "criterion": "recover template with token + 1 share, no K"
+      },
+      "key_compromise_plus_k_minus_1": {
+        "trials": 2000,
+        "full_recovery_success": 0,
+        "success_rate_pct": 0.0,
+        "note": "Config B leaks nothing below threshold even with K"
+      },
+      "malicious_share_substitution": {
+        "trials": 2000,
+        "detected": 2000,
+        "detection_rate_pct": 100.0,
+        "mechanism": "per-share integrity tag"
+      },
+      "threshold_collusion_k_minus_1": {
+        "recovery_success_rate_pct": 0.0,
+        "residual_uncertainty": "q candidate values per secret chunk"
+      },
+      "cross_enrolment_linkage": {
+        "share_bit_difference": 1.0,
+        "linkable": false,
+        "note": "independent salt/IV/key per enrolment"
+      },
+      "biohashing_inversion_without_token": {
+        "recovery_success_rate_pct": 0.0,
+        "reason": "projection matrix is salt-seeded and not stored; sign quantisation is many-to-one"
+      }
+    }
+  },
+  "R5_baselines": {
+    "record_bytes": 76,
+    "columns": [
+      "method",
+      "per_share_bytes",
+      "below_threshold_leakage",
+      "share_verification",
+      "ramp"
+    ],
+    "rows": [
+      [
+        "Standard Shamir (GF(2^8))",
+        76,
+        "0 (perfect)",
+        "no",
+        "no"
+      ],
+      [
+        "Ramp Shamir (packed x3)",
+        26,
+        "up to (k-1) packed bytes",
+        "no",
+        "yes(ramp)"
+      ],
+      [
+        "Feldman VSS (Shamir+commit)",
+        172,
+        "0 (perfect)",
+        "yes(public commit)",
+        "no"
+      ],
+      [
+        "AE-record + Shamir",
+        76,
+        "0 (perfect)",
+        "no",
+        "no"
+      ],
+      [
+        "Configuration A (NPN ramp, ours)",
+        50,
+        "6 or 12 bits / 16-bit block",
+        "yes(tag)",
+        "yes(ramp)"
+      ],
+      [
+        "Configuration B (multivar, ours)",
+        194,
+        "0 (perfect)",
+        "yes(tag+auth)",
+        "no"
+      ]
+    ]
+  },
+  "R6_storage": {
+    "record_bytes": 76,
+    "ConfigA": {
+      "residue_payload": 38,
+      "integrity_tag": 4,
+      "share_id": 4,
+      "basis_id": 4,
+      "total": 50,
+      "includes": "payload+tag+id+basis (all metadata counted)"
+    },
+    "ConfigB": {
+      "share_value_yi": 66,
+      "UH": 32,
+      "signUH": 32,
+      "SH": 32,
+      "SK": 32,
+      "total": 194,
+      "includes": "y_i + all four verification/auth tags"
+    }
+  },
+  "R7_timing": {
+    "A": {
+      "split_ms_mean": 0.2286981049996939,
+      "split_ms_sd": 0.02635601305116004,
+      "reconstruct_ms_mean": 1.0048228600007292,
+      "reconstruct_ms_sd": 0.0929817846087522,
+      "reps": 200
+    },
+    "B": {
+      "split_ms_mean": 0.040331189999562866,
+      "split_ms_sd": 0.010146996459644122,
+      "reconstruct_ms_mean": 2.075329994999038,
+      "reconstruct_ms_sd": 0.08846749721862021,
+      "reps": 200
+    }
+  },
+  "R8_reliability": {
+    "formula": "Q = sum_{i=k}^{n} C(n,i)(1-l)^i l^(n-i)",
+    "table": {
+      "0.00": {
+        "n5k3": 1.0,
+        "n7k4": 1.0,
+        "n7k3": 1.0,
+        "n9k5": 1.0
+      },
+      "0.05": {
+        "n5k3": 0.998842,
+        "n7k4": 0.999806,
+        "n7k3": 0.999994,
+        "n9k5": 0.999967
+      },
+      "0.10": {
+        "n5k3": 0.99144,
+        "n7k4": 0.997272,
+        "n7k3": 0.999824,
+        "n9k5": 0.999109
+      },
+      "0.15": {
+        "n5k3": 0.973388,
+        "n7k4": 0.987897,
+        "n7k3": 0.998778,
+        "n9k5": 0.994371
+      },
+      "0.20": {
+        "n5k3": 0.94208,
+        "n7k4": 0.966656,
+        "n7k3": 0.995328,
+        "n9k5": 0.980419
+      },
+      "0.25": {
+        "n5k3": 0.896484,
+        "n7k4": 0.929443,
+        "n7k3": 0.987122,
+        "n9k5": 0.951073
+      },
+      "0.30": {
+        "n5k3": 0.83692,
+        "n7k4": 0.873964,
+        "n7k3": 0.971204,
+        "n9k5": 0.901191
+      },
+      "0.40": {
+        "n5k3": 0.68256,
+        "n7k4": 0.710208,
+        "n7k3": 0.903744,
+        "n9k5": 0.733432
+      }
+    }
+  },
+  "R9_unlinkability": {
+    "n_identities": 40,
+    "n_tokens": 4,
+    "mated_mean": 0.5005533854166667,
+    "mated_sd": 0.03210815460369186,
+    "nonmated_mean": 0.5006239149305556,
+    "nonmated_sd": 0.03184207185982926,
+    "D_sys": 0.03260794025548445,
+    "D_local_max": 0.45454542280991816,
+    "interpretation": "D_sys in [0,1]; 0 = fully unlinkable. Same-identity templates under different tokens are statistically indistinguishable from different-identity templates."
+  },
+  "runtime_sec": 103.6
+}
