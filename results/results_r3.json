@@ -1,0 +1,52 @@
+{
+  "perfect_secrecy_enumeration": {
+    "field_q": 101,
+    "k": 3,
+    "n": 5,
+    "statement": "For any t < k observed shares, the number of full secret vectors consistent with the observation is q^(k-t), and each value of the secret component is consistent with exactly q^(k-t-1) of them; hence every secret value is equally likely and I(secret; shares)=0.",
+    "below_threshold": {
+      "1": {
+        "observed_shares": 1,
+        "total_consistent_vectors": 10201,
+        "expected_total_q_pow": 10201,
+        "solutions_per_secret_value": 101,
+        "uniform_over_secret": true
+      },
+      "2": {
+        "observed_shares": 2,
+        "total_consistent_vectors": 101,
+        "expected_total_q_pow": 101,
+        "solutions_per_secret_value": 1,
+        "uniform_over_secret": true
+      }
+    }
+  },
+  "posterior_equals_prior": {
+    "observed_shares": 2,
+    "field_q": 101,
+    "prior_prob": 0.009900990099009901,
+    "posterior_min": 0.009900990099009901,
+    "posterior_max": 0.009900990099009901,
+    "posterior_is_uniform": true,
+    "max_abs_deviation_from_uniform": 0.0
+  },
+  "verification_forgery": {
+    "trials": 20000,
+    "accepted_forgeries": 0,
+    "empirical_forgery_rate": 0.0,
+    "theoretical_bound": "2^-256 (SHA-256 preimage/collision resistance)",
+    "statement": "A forged share y' passes verification only if SHA-256(y'||SK) equals the stored SH; without SK this succeeds with probability at most 2^-256."
+  },
+  "tamper_detection": {
+    "A": {
+      "trials": 5000,
+      "detected": 5000,
+      "detection_rate": 1.0
+    },
+    "B": {
+      "trials": 5000,
+      "detected": 5000,
+      "detection_rate": 1.0
+    }
+  }
+}
